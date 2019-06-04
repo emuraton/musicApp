@@ -10,6 +10,7 @@ import React, { Component, Fragment } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import Title from './components/Title';
+import Player from './components/Player';
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -18,6 +19,7 @@ export default class App extends Component<Props> {
       <Fragment>
         <View style={styles.container}>
           <Title artist="Orelsan" title="San" />
+          <Player />
         </View>
       </Fragment>
     );
