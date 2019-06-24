@@ -13,7 +13,7 @@ const srcImage = require('../assets/san.jpeg');
 
 export default class Player extends React.Component {
   state = {
-    playing: true,
+    playing: false,
   };
   rotateThumbnail = new Animated.Value(0);
 
@@ -26,11 +26,8 @@ export default class Player extends React.Component {
     transform: [{ rotate: this.spin }],
   };
 
-  componentWillMount() {
-    this.playMusic();
-  }
-
-  playMusic = value => {
+  playMusic = () => {
+    this.rotateThumbnail.setValue(0);
     Animated.timing(this.rotateThumbnail, {
       toValue: 1,
       duration: 8000,
@@ -38,18 +35,25 @@ export default class Player extends React.Component {
       // useNativeDriver: true,
     }).start(o => {
       if (o.finished) {
-        this.rotateThumbnail.setValue(0);
         this.playMusic();
       }
     });
   };
 
+  revertTime = () => {
+    this.rotateThumbnail.stopAnimation(value => {
+      this.rotateThumbnail.setValue(value);
+    });
+    Animated.timing(this.rotateThumbnail, {
+      toValue: 0,
+      duration: 200,
+      easing: Easing.linear,
+      // useNativeDriver: true,
+    }).start();
+  };
+
   onPress = () => {
-    this.state.playing
-      ? this.rotateThumbnail.stopAnimation(value => {
-          this.rotateThumbnail.setValue(value);
-        })
-      : this.playMusic(0);
+    this.state.playing ? this.revertTime() : this.playMusic(0);
 
     this.setState(state => ({
       playing: !state.playing,
@@ -57,6 +61,7 @@ export default class Player extends React.Component {
   };
 
   render() {
+    const iconName = this.state.playing ? 'controller-paus' : 'controller-play';
     return (
       <TouchableOpacity onPress={this.onPress} style={styles.container}>
         <View>
@@ -96,7 +101,7 @@ export default class Player extends React.Component {
           />
         </View>
         <View style={styles.playButton}>
-          <Icon name="controller-play" color="white" size={40} />
+          <Icon name={iconName} color="white" size={40} />
         </View>
       </TouchableOpacity>
     );
